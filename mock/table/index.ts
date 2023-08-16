@@ -57,7 +57,7 @@ const treeList: TreeListProps[] = []
 for (let i = 0; i < count; i++) {
   treeList.push(
     Mock.mock({
-      id: toAnyString(),
+      id: i + 1,
       // timestamp: +Mock.Random.date('T'),
       author: '@first',
       title: '@title(5, 10)',
@@ -67,7 +67,8 @@ for (let i = 0; i < count; i++) {
       pageviews: '@integer(300, 5000)',
       children: [
         {
-          id: toAnyString(),
+          id: i + 1 + '-1',
+          pid: i + 1,
           // timestamp: +Mock.Random.date('T'),
           author: '@first',
           title: '@title(5, 10)',
@@ -77,7 +78,8 @@ for (let i = 0; i < count; i++) {
           pageviews: '@integer(300, 5000)',
           children: [
             {
-              id: toAnyString(),
+              id: i + 1 + '-1-1',
+              pid: i + 1 + '-1',
               // timestamp: +Mock.Random.date('T'),
               author: '@first',
               title: '@title(5, 10)',
@@ -87,7 +89,8 @@ for (let i = 0; i < count; i++) {
               pageviews: '@integer(300, 5000)'
             },
             {
-              id: toAnyString(),
+              id: i + 1 + '-1-2',
+              pid: i + 1 + '-1',
               // timestamp: +Mock.Random.date('T'),
               author: '@first',
               title: '@title(5, 10)',
@@ -99,7 +102,8 @@ for (let i = 0; i < count; i++) {
           ]
         },
         {
-          id: toAnyString(),
+          id: i + 1 + '-2',
+          pid: i + 1,
           // timestamp: +Mock.Random.date('T'),
           author: '@first',
           title: '@title(5, 10)',
@@ -109,7 +113,8 @@ for (let i = 0; i < count; i++) {
           pageviews: '@integer(300, 5000)'
         },
         {
-          id: toAnyString(),
+          id: i + 1 + '-3',
+          pid: i + 1,
           // timestamp: +Mock.Random.date('T'),
           author: '@first',
           title: '@title(5, 10)',
@@ -119,7 +124,8 @@ for (let i = 0; i < count; i++) {
           pageviews: '@integer(300, 5000)'
         },
         {
-          id: toAnyString(),
+          id: i + 1 + '-4',
+          pid: i + 1,
           // timestamp: +Mock.Random.date('T'),
           author: '@first',
           title: '@title(5, 10)',

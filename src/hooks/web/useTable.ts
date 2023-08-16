@@ -2,6 +2,9 @@ import { useI18n } from '@/hooks/web/useI18n'
 import { Table, TableExpose, TableProps, TableSetProps, TableColumn } from '@/components/Table'
 import { ElTable, ElMessageBox, ElMessage } from 'element-plus'
 import { ref, watch, unref, nextTick, onMounted } from 'vue'
+import Sortable from 'sortablejs'
+import { TreeHelperConfig, treeToList, listToTree } from '@/utils/tree'
+import { cloneDeep } from 'lodash-es'
 
 const { t } = useI18n()
 
@@ -142,12 +145,19 @@ export const useTable = (config: UseTableConfig) => {
       methods.getList()
     },
 
-    // sortableChange: (e: any) => {
-    //   console.log('sortableChange', e)
-    //   const { oldIndex, newIndex } = e
-    //   dataList.value.splice(newIndex, 0, dataList.value.splice(oldIndex, 1)[0])
-    //   // to do something
-    // }
+    sortableChange: (e: Sortable.SortableEvent, config: Partial<TreeHelperConfig> = {}) => {
+      console.log('sortableChange', e)
+      const listTable = treeToList(cloneDeep(unref(dataList)))
+      console.log(listTable)
+      const { oldIndex, newIndex } = e
+      if (oldIndex !== void 0 && newIndex !== void 0) {
+        // const treeTable = listToTree(listTable, config)
+        ;[listTable[oldIndex], listTable[newIndex]] = [listTable[newIndex], listTable[oldIndex]]
+        const treeTable = listToTree(listTable, config)
+        dataList.value = treeTable
+      }
+    },
+
     // 删除数据
     delList: async (idsLength: number) => {
       const { fetchDelApi } = config

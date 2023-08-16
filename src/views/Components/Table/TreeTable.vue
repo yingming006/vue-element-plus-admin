@@ -7,7 +7,7 @@ import { reactive, unref } from 'vue'
 import { ElTag, ElButton } from 'element-plus'
 import { useTable } from '@/hooks/web/useTable'
 
-const { tableRegister, tableState } = useTable({
+const { tableRegister, tableState, tableMethods } = useTable({
   fetchDataApi: async () => {
     const { currentPage, pageSize } = tableState
     const res = await getTreeTableListApi({
@@ -20,6 +20,9 @@ const { tableRegister, tableState } = useTable({
     }
   }
 })
+
+const { sortableChange } = tableMethods
+
 const { loading, dataList, total, currentPage, pageSize } = tableState
 
 const { t } = useI18n()
@@ -89,6 +92,10 @@ const columns = reactive<TableColumn[]>([
 const actionFn = (data) => {
   console.log(data)
 }
+
+const onSortableChange = (e: any) => {
+  sortableChange(e)
+}
 </script>
 
 <template>
@@ -105,6 +112,7 @@ const actionFn = (data) => {
         total: total
       }"
       @register="tableRegister"
+      @sortable-change="onSortableChange"
     />
   </ContentWrap>
 </template>
