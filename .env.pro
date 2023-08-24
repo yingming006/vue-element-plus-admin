@@ -1,8 +1,19 @@
 # 环境
 NODE_ENV=production
 
+VITE_DEV=false
+
+# 请求路径
+VITE_BASE_URL='http://localhost:48080'
+
+# 上传路径
+VITE_UPLOAD_URL='http://localhost:48080/admin-api/infra/file/upload'
+
 # 接口前缀
-VITE_API_BASE_PATH=pro
+VITE_API_BASE_PATH=
+
+# 接口地址
+VITE_API_URL=/admin-api
 
 # 打包路径
 VITE_BASE_PATH=/

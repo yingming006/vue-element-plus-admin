@@ -27,6 +27,8 @@ import { defineComponent } from 'vue'
 
     activeMenu: '/dashboard'  显示高亮的路由路径
 
+    followAuth: '/home'  跟随哪个路由进行权限过滤
+
     canTo: true               设置为true即使hidden为true，也依然可以进行路由跳转(默认 false)
 
     permission: ['edit','add', 'delete']    设置该路由的权限
@@ -49,10 +51,7 @@ declare module 'vue-router' {
   }
 }
 
-type Component<T = any> =
-  | ReturnType<typeof defineComponent>
-  | (() => Promise<typeof import('*.vue')>)
-  | (() => Promise<T>)
+type Component<T = any> = ReturnType<typeof defineComponent> | (() => Promise<typeof import('*.vue')>) | (() => Promise<T>)
 
 declare global {
   declare interface AppRouteRecordRaw extends Omit<RouteRecordRaw, 'meta'> {
@@ -62,14 +61,21 @@ declare global {
     children?: AppRouteRecordRaw[]
     props?: Recordable
     fullPath?: string
+    keepAlive?: boolean
   }
 
   declare interface AppCustomRouteRecordRaw extends Omit<RouteRecordRaw, 'meta'> {
+    icon: any
     name: string
     meta: RouteMeta
     component: string
+    componentName?: string
     path: string
     redirect: string
     children?: AppCustomRouteRecordRaw[]
+    keepAlive?: boolean
+    visible?: boolean
+    parentId?: number
+    alwaysShow?: boolean
   }
 }

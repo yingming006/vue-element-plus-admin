@@ -25,10 +25,7 @@ declare global {
 
   declare type LayoutType = 'classic' | 'topLeft' | 'top' | 'cutMenu'
 
-  declare type AxiosHeaders =
-    | 'application/json'
-    | 'application/x-www-form-urlencoded'
-    | 'multipart/form-data'
+  declare type AxiosHeaders = 'application/json' | 'application/x-www-form-urlencoded' | 'multipart/form-data'
 
   declare type AxiosMethod = 'get' | 'post' | 'delete' | 'put'
 
@@ -63,5 +60,16 @@ declare global {
     topHeaderTextColor?: string
     topHeaderHoverColor?: string
     topToolBorderColor?: string
+  }
+
+  interface PageParam {
+    pageSize?: number
+    pageNo?: number
+  }
+
+  interface Tree {
+    id: number
+    name: string
+    children?: Tree[] | any[]
   }
 }

@@ -1,69 +1,53 @@
 import router from './router'
-import { useAppStoreWithOut } from '@/store/modules/app'
-import { useStorage } from '@/hooks/web/useStorage'
 import type { RouteRecordRaw } from 'vue-router'
+import { getAccessToken } from '@/utils/auth'
 import { useTitle } from '@/hooks/web/useTitle'
 import { useNProgress } from '@/hooks/web/useNProgress'
 import { usePermissionStoreWithOut } from '@/store/modules/permission'
-// import { useDictStoreWithOut } from '@/store/modules/dict'
 import { usePageLoading } from '@/hooks/web/usePageLoading'
-// import { getDictApi } from '@/api/common'
+import { useDictStoreWithOut } from '@/store/modules/dict'
+import { useUserStoreWithOut } from '@/store/modules/user'
 
-const permissionStore = usePermissionStoreWithOut()
-
-const appStore = useAppStoreWithOut()
-
-// const dictStore = useDictStoreWithOut()
-
-const { getStorage } = useStorage()
+// TODO
 
 const { start, done } = useNProgress()
 
 const { loadStart, loadDone } = usePageLoading()
 
-const whiteList = ['/login'] // 不重定向白名单
+// 路由不重定向白名单
+const whiteList = ['/login', '/social-login', '/auth-redirect', '/bind', '/register', '/oauthLogin/gitee']
 
 router.beforeEach(async (to, from, next) => {
   start()
   loadStart()
-  if (getStorage(appStore.getUserInfo)) {
+  if (getAccessToken()) {
     if (to.path === '/login') {
       next({ path: '/' })
     } else {
-      // if (!dictStore.getIsSetDict) {
-      //   // 获取所有字典
-      //   const res = await getDictApi()
-      //   if (res) {
-      //     dictStore.setDictObj(res.data)
-      //     dictStore.setIsSetDict(true)
-      //   }
-      // }
-      if (permissionStore.getIsAddRouters) {
-        next()
-        return
+      // 获取所有字典
+      const dictStore = useDictStoreWithOut()
+      const userStore = useUserStoreWithOut()
+      const permissionStore = usePermissionStoreWithOut()
+      if (!dictStore.getIsSetDict) {
+        await dictStore.setDictMap()
       }
-
-      // 开发者可根据实际情况进行修改
-      const roleRouters = getStorage('roleRouters') || []
-      const userInfo = getStorage(appStore.getUserInfo)
-
-      // 是否使用动态路由
-      if (appStore.getDynamicRouter) {
-        userInfo.role === 'admin'
-          ? await permissionStore.generateRoutes('admin', roleRouters as AppCustomRouteRecordRaw[])
-          : await permissionStore.generateRoutes('test', roleRouters as string[])
-      } else {
+      if (!userStore.getIsSetUser) {
+        isRelogin.show = true
+        await userStore.setUserInfoAction()
+        isRelogin.show = false
+        // 后端过滤菜单
         await permissionStore.generateRoutes('none')
+        permissionStore.getAddRouters.forEach((route) => {
+          router.addRoute(route as unknown as RouteRecordRaw) // 动态添加可访问路由表
+        })
+        const redirectPath = from.query.redirect || to.path
+        const redirect = decodeURIComponent(redirectPath as string)
+        const nextData = to.path === redirect ? { ...to, replace: true } : { path: redirect }
+        permissionStore.setIsAddRouters(true)
+        next(nextData)
+      } else {
+        next()
       }
-
-      permissionStore.getAddRouters.forEach((route) => {
-        router.addRoute(route as unknown as RouteRecordRaw) // 动态添加可访问路由表
-      })
-      const redirectPath = from.query.redirect || to.path
-      const redirect = decodeURIComponent(redirectPath as string)
-      const nextData = to.path === redirect ? { ...to, replace: true } : { path: redirect }
-      permissionStore.setIsAddRouters(true)
-      next(nextData)
     }
   } else {
     if (whiteList.indexOf(to.path) !== -1) {
